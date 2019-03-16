@@ -5,7 +5,7 @@ This is a simple recurrent convolutional neural network used for recognizing nas
 
 The 'data' folder contains 2D time-series images of individual nuclei that show nascent transcription bursts. The data files contain the results of a optimized semantic segmentation and human-corrected results. Using utils.load_data.SEG_RNN will provide the raw images, labels, spot-masks (used as weights), and cell-masks for training and validation. (First, use the preprocess_spots.ipynb notebook to create the pickle file). 
 
-The train_RNN_SEG.py script is a template for running training and validation. The 'generator' class controls how tensorflow builds the model. The recurrent CNN architecture is defined in model_layers.cell_models.SpotCell. 
+The train_RNN_SEG.py script is a template for running training and validation. The 'generator' class controls how tensorflow builds the model. The individual recurrent CNN cell is defined in model_layers.cell_models.SpotCell. 
 
 # Parameters 
 
