@@ -38,4 +38,8 @@ Choice to restore a previous session. If restore_sess=1 and retore_name=None, th
 params['restore_sess'] = 0
 params['restore_name'] = None
 
-# Running training. 
+# Training/validation
+
+run_RNN_SEG will generate a sub-directory "rnn_loop_bp_X_path_Y". X is the number of frames in backprop and Y is the arch_path parameter. 
+
+The model states are saved in this directory and if validation images are saved then the sub-dir 'images' will be filled populated with images of the validation for each iteration requested to be saved. 
