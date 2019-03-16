@@ -1,5 +1,5 @@
 # recurrent_spot_net
-Recurrent convolutional neural networks for nascent-transcription spot detection. 
+a recurrent convolutional neural network for nascent-transcription spot detection. 
 
 This is a simple recurrent convolutional neural network used for recognizing nascent transcription pulses. By using a recurrent CNN, we can detect very faint spots that are on the tail ends of a transcription burst. 
 
