@@ -1,0 +1,35 @@
+# recurrent_spot_net
+Recurrent convolutional neural networks for nascent-transcription spot detection. 
+
+This is a simple recurrent convolutional neural network used for recognizing nascent transcription pulses. By using a recurrent CNN, we can detect very faint spots that are on the tail ends of a transcription burst. 
+
+The 'data' folder contains 2D time-series images of individual nuclei that show nascent transcription bursts. The data files contain the results of a optimized semantic segmentation and human-corrected results. Using utils.load_data.SEG_RNN will provide the raw images, labels, spot-masks (used as weights), and cell-masks for training and validation. (First, use the preprocess_spots.ipynb notebook to create the pickle file). 
+
+Parameters are defined in 'run_RNN_SEG.py'. The non-obvious parameters are explained below:
+
+# The scripts will automatically create subdirectories in 'work_dir' for different model architectures.
+params['work_dir'] = os.getcwd()
+# The frequency at which to save the model in terms of iterations. 
+params['checkpointN'] = 1
+
+# Sive of the convolution kernel. 
+params['conv_size'] = 6
+
+
+# Option to pass the recurrent state forward only, or run the model forward, then backward. 
+params['arch_path'] = 'forward_backward' # Can be forward or forward_backward
+
+# Number of time-points to use for each batch.
+params['backprop_length'] = 6
+
+Data-series that are less than this value are simply repeated by reversing the time-series. For example a 3-frame data series with a backprop_length=6 would be fed into the model as a 6-frame series with frame index as: [0, 1, 2, 1, 0, 1]. Is the data is longer than backprop_length, then the batch is broken up into pieces. For example a 9-frame data series with backprop_length=6 would be two batches with frame idices:
+[0,1,2,3,4,5]
+[6,7,8,7,6,7]
+
+This approach maintains the time-relationship between frames and allows a constant size for each batch rather than rebuilding the graph for each batch with variable length. The output from validation is automatically put together as the original sequence of frames. 
+
+This does however weigh individual frames in shorter series higher because they are repeated. Other ideas to approach this are welcome! 
+
+# Choice to restore a previous session. If restore_sess=1 and retore_name=None, the latest model is taken. 
+params['restore_sess'] = 0
+params['restore_name'] = None
