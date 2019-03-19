@@ -33,7 +33,7 @@ This approach maintains the time-relationship between frames and allows a consta
 
 This does however weigh individual frames in shorter series higher because they are repeated. Other ideas to approach this are welcome! 
 
-Choice to restore a previous session. If restore_sess=1 and retore_name=None, the latest model is taken. 
+Choice to restore a previous session. If restore_sess=1 and retore_name=None, the latest model is taken.
 params['restore_sess'] = 0
 params['restore_name'] = None
 
