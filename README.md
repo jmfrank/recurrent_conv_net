@@ -11,16 +11,14 @@ The train_RNN_SEG.py script is a template for running training and validation. T
 Parameters are defined in 'run_RNN_SEG.py'. The non-obvious parameters are explained below:
 
 The scripts will automatically create subdirectories in 'work_dir' for different model architectures.
-params['work_dir'] = os.getcwd()
 
-The frequency at which to save the model in terms of iterations. 
-params['checkpointN'] = 1
+checkpoinN: The frequency at which to save the model in terms of iterations. 
 
-Size of the convolution kernel. 
-params['conv_size'] = 6
 
-Option to pass the recurrent state forward only, or run the model forward, then backward. 
-params['arch_path'] = 'forward_backward' # Can be forward or forward_backward
+conv_size = Size of the convolution kernel for standard 2D convolution layers. 
+combiner_conv_size = Size of the kernel for convolving the previous state with the current frame. This should be relatively large to account for any frame-to-frame displacement of the nascent spot. 
+
+arch_path = Option to pass the recurrent state forward only ('forward'), or run the model forward, then backward ('forward_backward')
 
 Number of time-points to use for each batch.
 params['backprop_length'] = 6
