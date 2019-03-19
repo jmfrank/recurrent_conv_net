@@ -1,5 +1,4 @@
 # recurrent_spot_net
-a recurrent convolutional neural network for nascent-transcription spot detection. 
 
 This is a recurrent convolutional neural network used for recognizing nascent transcription pulses. By using a recurrent CNN, we can detect very faint spots that are on the tail ends of a transcription burst. Because these pulses are relatively small features, typical down-sampling / upsampling approaches (i.e. U-net) cannot be applied as the feature can become lost in down-sampling. Further, the pixel-limited nature of the features mean the majority of pixels are background, and the loss function must only be taken for pixels near the features to put more weight on foreground pixels.  
 
