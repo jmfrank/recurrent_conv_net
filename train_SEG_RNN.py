@@ -59,18 +59,20 @@ def train_and_score(params):
 
             for i in range(model.n_val_batches):
 
-                if model.iteration > 0 and (model.iteration % model.checkpointN == 0 or model.iteration == model.epochs):
-                    save_flag = True
-                else:
-                    save_flag = False
+                x, y, masks = model.r_cnn_val(i)
 
-                y, masks = model.r_cnn_val(i,save_img=False)
+                # filter masks
+                masks = filter_mask_series(masks,min_size=params['min_size'])
 
                 # skip tfpn calculation for first iteration.
                 if iteration > 0:
-                    these_stats = get_tfpn(y, masks)
+                    these_stats, _ = get_tfpn(y, masks, min_size=1)
 
                     stats = add_dict(stats, these_stats)
+
+                if model.iteration > 0 and (model.iteration % model.checkpointN == 0 or model.iteration == model.epochs):
+                    model.save_imgs(x, y, masks, '_batch_' + str(i) )
+
 
             # Global metrics.
             metrics_all = model.get_all_metrics()
@@ -102,3 +104,5 @@ def train_and_score(params):
 
                 
     model.sess.close()
+
+

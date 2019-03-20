@@ -6,14 +6,14 @@ from tensorflow.python.ops import array_ops
 class SpotCell( tf.nn.rnn_cell.RNNCell ):
 
 	#Define properties. 
-    def __init__(self, num_units, padding = 'same', layer_depth=64, conv_size=6, strides=1, n_classes=2):
+    def __init__(self, num_units, padding = 'same', layer_depth=64, conv_size=6, strides=1, n_classes=2, combiner_conv_size=8):
         self._num_units = layer_depth
         self.padding=padding
         self.layer_depth = layer_depth
         self.conv_size=conv_size
         self.strides=strides
         self.n_classes = n_classes
-    
+        self.combiner_conv_size = combiner_conv_size
     @property
     def state_size(self):
         return self._num_units
@@ -41,7 +41,7 @@ class SpotCell( tf.nn.rnn_cell.RNNCell ):
             
             # Combine step
             outputs = tf.concat([state, outputs], 3)
-            outputs = tf.layers.conv2d(outputs,self.layer_depth, self.conv_size, padding=self.padding, kernel_initializer=tf.contrib.layers.xavier_initializer(), name='conv3', use_bias=False)
+            outputs = tf.layers.conv2d(outputs, self.layer_depth, self.combiner_conv_size, padding=self.padding, kernel_initializer=tf.contrib.layers.xavier_initializer(), name='conv3', use_bias=False)
             outputs = tf.nn.relu(outputs)
 
         # Reset state to outputs

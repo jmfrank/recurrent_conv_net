@@ -34,7 +34,7 @@ class generator:
             setattr(self, p, params[p])
 
         # Name for this network.
-        self.network_name = 'rnn_loop_bp_' + repr(self.backprop_length) + '_path_' + self.arch_path
+        self.network_name = 'rnn_loop_bp_' + repr(self.backprop_length) + '_comb' + str(self.combiner_conv_size) + '_k' + str(self.conv_size) + '_path_' + self.arch_path
 
         self.network_dir = self.work_dir + '/' + self.network_name + '/'
 
@@ -91,7 +91,13 @@ class generator:
 
         with tf.variable_scope('spot_RCNN') as scope:
             # Initialize our cell object.
-            rcnn = SpotCell(0, padding='same', layer_depth=self.layer_depth, conv_size=self.conv_size, strides=1, n_classes=self.nb_classes)
+            rcnn = SpotCell(0, padding='same',
+                            layer_depth=self.layer_depth,
+                            conv_size=self.conv_size,
+                            strides=1,
+                            n_classes=self.nb_classes,
+                            combiner_conv_size=self.combiner_conv_size
+                            )
 
         # Loop over data. Options to do just forward or forward+backward.
         if self.arch_path is 'forward':
@@ -214,9 +220,9 @@ class generator:
 
             curr_state = self.sess.run(self.current_state, feed_dict={self.batch_x_placeholder: batch_data, self.batch_y_placeholder: batch_label, self.batch_w_placeholder: batch_weight, self.init_state: curr_state})
 
-    def r_cnn_val(self, idx, save_img=False):
+    def r_cnn_val(self, idx):
 
-        # Frames.
+        # Original image data shape.
         img_shape = self.DATA.x_val[idx].shape
 
         # Get data rounded up to backprop_length.
@@ -231,6 +237,7 @@ class generator:
         curr_state = np.zeros([1, img_shape[1], img_shape[2], 64])
 
         for j in range(int(frames / self.backprop_length)):
+
             # frame-series.
             frame_idx = range(j * self.backprop_length, (j + 1) * self.backprop_length)
 
@@ -254,6 +261,7 @@ class generator:
             r_masks[frame_idx] = np.asarray([m[0] for m in masks])
             r_masks[frame_idx] = r_masks[frame_idx] * c[frame_idx]
 
+            #
             # Get moving average of metrics and losses
             if self.val_counter == 0:
                 self.loss_total = loss_temp
@@ -262,14 +270,18 @@ class generator:
 
             self.val_counter = self.val_counter + 1
 
-            # Save images.
-            if save_img:
+        # Need to cut off arrays so that only real frames get passed onwards.
+        real_frames = range(img_shape[0])
 
-                out_masks = list(r_masks[frame_idx])
-                out_name = self.network_dir + 'images/' + 'iteration_' + repr(self.iteration) + '_batch_' + repr(idx) + '_series_' + repr(j)
-                save_series(x[frame_idx], out_masks, out_name, labels=y[frame_idx])
+        # Return relevant data for downstream processing.
+        return x[real_frames], y[real_frames], r_masks[real_frames]
 
-        return y, r_masks
+    # Save labeled data and predicted seg mask.
+    def save_imgs(self, x, y, masks, end_name):
+        # Masks need to be list?
+        out_masks = list(masks)
+        out_name = self.network_dir + 'images/' + 'iteration_' + repr(self.iteration) + end_name
+        save_series(x, out_masks, out_name, y)
 
     def get_all_metrics(self):
 
