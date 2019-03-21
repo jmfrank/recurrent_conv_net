@@ -20,8 +20,7 @@ combiner_conv_size = Size of the kernel for convolving the previous state with t
 
 arch_path = Option to pass the recurrent state forward only ('forward'), or run the model forward, then backward ('forward_backward')
 
-Number of time-points to use for each batch.
-params['backprop_length'] = 6
+backprop_length = Number of time-points to use for each batch.
 
 Data-series that are less than this value are simply repeated by reversing the time-series. For example a 3-frame data series with a backprop_length=6 would be fed into the model as a 6-frame series with frame index as: [0, 1, 2, 1, 0, 1]. Is the data is longer than backprop_length, then the batch is broken up into pieces. For example a 9-frame data series with backprop_length=6 would be two batches with frame indices:
 [0,1,2,3,4,5]
@@ -31,12 +30,12 @@ This approach maintains the time-relationship between frames and allows a consta
 
 This does however weigh individual frames in shorter series higher because they are repeated. Other ideas to approach this are welcome! 
 
-Choice to restore a previous session. If restore_sess=1 and retore_name=None, the latest model is taken.
-params['restore_sess'] = 0
-params['restore_name'] = None
+restore_sess & restore_name: Choice to restore a previous session. If restore_sess=1 and retore_name=None, the latest model is taken.
 
 # Training/validation
 
-run_RNN_SEG will generate a sub-directory "rnn_loop_bp_X_path_Y". X is the number of frames in backprop and Y is the arch_path parameter. 
+run_RNN_SEG will generate a sub-directory with a name specific to the model defined by params. 
 
 The model states are saved in this directory and if validation images are saved then the sub-dir 'images' will be filled populated with images of the validation for each iteration requested to be saved. 
+
+Results posted soon...
